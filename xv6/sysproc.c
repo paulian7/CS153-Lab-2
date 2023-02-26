@@ -91,7 +91,7 @@ sys_uptime(void)
 }
 
 // == NEW SYSTEM CALL - setPriority == 
-int sys_setPriority(void) {
+int sys_set_prior(void) {
   int priority;
 
   /* == argint() breakdown ==

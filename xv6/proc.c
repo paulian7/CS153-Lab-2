@@ -537,9 +537,9 @@ procdump(void)
 }
 
 // == NEW SYSTEM CALL - setPriority == 
-void setPriority(int level) {
+void set_prior(int prior_lvl) {
   struct proc *currProc = myproc(); // gets the current process that's going on 
-  currProc->priority = level; // assigns the priority level passed in to the current process 
+  currProc->priority = prior_lvl; // assigns the priority level passed in to the current process 
 
   yield(); // returns control back to the schedule bc of how the priority value has changed
 }
