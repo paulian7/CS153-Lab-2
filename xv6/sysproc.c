@@ -90,9 +90,9 @@ sys_uptime(void)
   return xticks;
 }
 
-// == NEW SYSTEM CALL - changePriority == 
-int sys_changePriority(void) {
-  int priority = 0;
+// == NEW SYSTEM CALL - setPriority == 
+int sys_setPriority(void) {
+  int priority;
 
   /* == argint() breakdown ==
       * can't pass arguments from user-level functions to kernel-level functions in xv6
@@ -100,11 +100,10 @@ int sys_changePriority(void) {
       * helps pass in arguments into a kernel function 
       * to pass in integers --> argint() is called  
   */
-  argint(0, &priority); 
-  if (priority < 0 || priority > 11) {
-    // invalid :( 
+  if(argint(0, &priority) < 0) {
+    return -1;
   }
-  else if(priority > 0 && priority < 11) {
-    changePriority(priority);
-  }
+
+  setPriority(priority);
+  return 0;
 }
