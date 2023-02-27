@@ -283,6 +283,11 @@ wait(void)
   struct proc *p;
   int havekids, pid;
   struct proc *curproc = myproc();
+
+    // IF WAITING THEN INCREASE PRIORITY 
+  if (curproc->priority > 1) {
+    curproc->priority = curproc->priority - 1;
+  }
   
   acquire(&ptable.lock);
   for(;;){
@@ -314,13 +319,7 @@ wait(void)
       return -1;
     }
 
-    // Wait for children to exit.  (See wakeup1 call in proc_exit.)
-
-    // IF WAITING THEN INCREASE PRIORITY 
-    if (curproc->priority > 1) {
-      curproc->priority = curproc->priority - 1;
-    }
-    
+    // Wait for children to exit.  (See wakeup1 call in proc_exit.
     sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
 }
