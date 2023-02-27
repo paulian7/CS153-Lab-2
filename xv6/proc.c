@@ -259,7 +259,7 @@ exit(void)
   curproc->cwd = 0;
   curproc->end_time = ticks;
 
-  cprintf("\nTurnaround time is %d - %d resulting in a final time of %d \n", curproc->end_time, curproc->start_time, curproc->end_time - curproc->start_time);
+  cprintf("\nTurnaround time is %d \n", curproc->end_time - curproc->start_time);
   cprintf("\nWaiting time is %d\n", curproc->burst_time);
 
 
@@ -292,7 +292,7 @@ wait(void)
   int havekids, pid;
   struct proc *curproc = myproc();
 
-    // IF WAITING THEN INCREASE PRIORITY 
+  // IF WAITING THEN INCREASE PRIORITY 
   if (curproc->priority > 1) {
     curproc->priority = curproc->priority - 1;
   }
