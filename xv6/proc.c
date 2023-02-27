@@ -352,8 +352,6 @@ scheduler(void)
       if (p->state == RUNNABLE && p->priority < highest_priority) {
         proc_of_interest = p;
         highest_priority = p->priority;
-      } else {
-          continue;
       }
     }
     // Switch to chosen process.  It is the process's job
