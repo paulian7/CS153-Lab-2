@@ -234,6 +234,11 @@ exit(void)
   struct proc *p;
   int fd;
 
+  // DECREASE PRIORITY IF EXITED
+  if(curproc->priority < 10){
+    curproc->priority = curproc->priority + 1;
+  }
+
   if(curproc == initproc)
     panic("init exiting");
 
@@ -310,6 +315,12 @@ wait(void)
     }
 
     // Wait for children to exit.  (See wakeup1 call in proc_exit.)
+
+    // IF WAITING THEN INCREASE PRIORITY 
+    if (curproc->priority > 1) {
+      curproc->priority = curproc->priority - 1;
+    }
+    
     sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
 }
