@@ -235,7 +235,7 @@ exit(void)
   int fd;
 
   // DECREASE PRIORITY IF EXITED
-  if(curproc->priority < 10){
+  if(curproc->priority < 31){
     curproc->priority = curproc->priority + 1;
   }
 
@@ -343,32 +343,34 @@ scheduler(void)
     // Enable interrupts on this processor.
     sti();
 
-    int highest_priority = 10;
-    struct proc *proc_of_interest;
+    int highest_priority = 31;
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if (p->state == RUNNABLE && p->priority < highest_priority) {
-        proc_of_interest = p;
         highest_priority = p->priority;
       }
     }
-    // Switch to chosen process.  It is the process's job
-    // to release ptable.lock and then reacquire it
-    // before jumping back to us.
-    c->proc = proc_of_interest;
-    switchuvm(proc_of_interest);
-    proc_of_interest->state = RUNNING;
 
-    swtch(&(c->scheduler), proc_of_interest->context);
-    switchkvm();
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if (p->priority == highest_priority) {
+          // Switch to chosen process.  It is the process's job
+          // to release ptable.lock and then reacquire it
+          // before jumping back to us.
+          c->proc = p;
+          switchuvm(p);
+          p->state = RUNNING;
 
-    // Process is done running for now.
-    // It should have changed its p->state before coming back.
-    c->proc = 0;
-    release(&ptable.lock);
+          swtch(&(c->scheduler), p->context);
+          switchkvm();
 
+          // Process is done running for now.
+          // It should have changed its p->state before coming back.
+          c->proc = 0;
+          release(&ptable.lock);
+      }
+    } 
   }
 }
 

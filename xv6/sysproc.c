@@ -104,6 +104,6 @@ int sys_set_prior(void) {
     return -1;
   }
 
-  setPriority(priority);
+  set_prior(priority);
   return 0;
 }
