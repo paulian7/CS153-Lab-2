@@ -89,6 +89,8 @@ found:
   p->state = EMBRYO;
   p->pid = nextpid++;
   p->priority = 1; // edit - initialized priority property for processes to be 1 (highest val)
+  p->start_time = ticks;
+  p->burst_time = 0;
 
   release(&ptable.lock);
 
@@ -202,6 +204,7 @@ fork(void)
   *np->tf = *curproc->tf;
 
   np->priority = curproc->priority; // setting child priority val to parent's priority val
+  np->burst_time = 0; //setting child burst time to 0
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
@@ -254,6 +257,11 @@ exit(void)
   iput(curproc->cwd);
   end_op();
   curproc->cwd = 0;
+  curproc->end_time = ticks;
+
+  cprintf("\nTurnaround time is %d - %d resulting in a final time of %d \n", curproc->end_time, curproc->start_time, curproc->end_time - curproc->start_time);
+  cprintf("\nWaiting time is %d\n", curproc->burst_time);
+
 
   acquire(&ptable.lock);
 
@@ -359,11 +367,14 @@ scheduler(void)
           // to release ptable.lock and then reacquire it
           // before jumping back to us.
           c->proc = p;
+          int burst_start = ticks;
           switchuvm(p);
           p->state = RUNNING;
 
           swtch(&(c->scheduler), p->context);
           switchkvm();
+          int burst_end = ticks;
+          p->burst_time += (burst_end - burst_start);
 
           // Process is done running for now.
           // It should have changed its p->state before coming back.
