@@ -307,6 +307,11 @@ wait(void)
       havekids = 1;
       if(p->state == ZOMBIE){
         // Found one.
+        if(curproc->priority < p->priority) {
+          int temp = curproc->priority ;
+          curproc->priority = p->priority;
+          p->priority = temp;
+        }
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
