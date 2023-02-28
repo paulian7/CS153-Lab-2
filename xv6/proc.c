@@ -88,7 +88,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  p->priority = 1; // edit - initialized priority property for processes to be 1 (highest val)
+  p->priority = 0; // edit - initialized priority property for processes to be 0 (highest val)
   p->start_time = ticks;
   p->burst_time = 0;
 
@@ -293,7 +293,7 @@ wait(void)
   struct proc *curproc = myproc();
 
   // IF WAITING THEN INCREASE PRIORITY 
-  if (curproc->priority > 1) {
+  if (curproc->priority > 0) {
     curproc->priority = curproc->priority - 1;
   }
   
