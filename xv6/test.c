@@ -3,13 +3,30 @@
 #include "user.h"
 
 int PScheduler(void);
+int inheritance(void);
 
 int main(int argc, char *argv[])
 {
-    PScheduler();
+    // PScheduler();
+    inheritance();
 
     exit();
 }    
+
+int inheritance(void){
+    int pid;
+
+    pid = fork();
+
+    if(pid == 0) {
+        set_prior(10);
+        printf(1, "This is the child with PID %d with priority %d\n\n", getpid(), 10);
+    } else {
+        set_prior(20);
+        printf(1, "This is the parent with PID %d with priority %d\n\n", getpid(), 20);
+    }
+    exit();
+}
       
 int PScheduler(void){
 		 
