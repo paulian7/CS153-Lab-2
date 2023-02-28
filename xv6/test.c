@@ -17,7 +17,7 @@ int PScheduler(void){
     // 0 is the highest priority. All processes have a default priority of 10
     // You can use your own priority range/value setup
 
-    int pid, ret_pid, exit_status;
+    int pid, ret_pid;
     int i,j,k;
   
     printf(1, "Testing the priority scheduler and setpriority system call:\n");
@@ -49,7 +49,7 @@ int PScheduler(void){
     if(pid > 0) {
         for (i = 0; i < 3; i++) {
             ret_pid = wait();
-            printf(1, " - This is the parent: child with PID# %d has finished with status %d \n", ret_pid, exit_status);
+            printf(1, " - This is the parent: child with PID# %d has finished with status %d \n", ret_pid);
         }
         printf(1, " - If processes with highest priority finished first then its correct. \n");
     }
