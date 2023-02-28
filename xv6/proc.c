@@ -88,7 +88,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  p->priority = 0; // edit - initialized priority property for processes to be 0 (highest val)
+  p->priority = 10; // edit - initialized priority property for processes to be 0 (highest val)
   p->start_time = ticks;
   p->burst_time = 0;
 
@@ -260,7 +260,7 @@ exit(void)
   curproc->end_time = ticks;
 
   cprintf("\nTurnaround time is %d \n", curproc->end_time - curproc->start_time);
-  cprintf("\nWaiting time is %d\n", curproc->burst_time);
+  cprintf("\nWaiting time is %d with burst time of %d \n\n", curproc->end_time - curproc->start_time - curproc->burst_time, curproc->burst_time);
 
 
   acquire(&ptable.lock);
