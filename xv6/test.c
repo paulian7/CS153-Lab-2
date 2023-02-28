@@ -3,29 +3,36 @@
 #include "user.h"
 
 int PScheduler(void);
-int inheritance(void);
+int test_scheduler_performance();
+int test_scheduler_performance_fork();
 
 int main(int argc, char *argv[])
 {
     // PScheduler();
-    inheritance();
-
+    // test_scheduler_performance();
+    // test_scheduler_performance_fork();
     exit();
+    return 0;
 }    
 
-int inheritance(void){
-    int pid;
-
-    pid = fork();
-
-    if(pid == 0) {
-        set_prior(10);
-        printf(1, "This is the child with PID %d with priority %d\n\n", getpid(), 10);
-    } else {
-        set_prior(20);
-        printf(1, "This is the parent with PID %d with priority %d\n\n", getpid(), 20);
-    }
+int test_scheduler_performance(void) {
+    printf(1, "Process with PID %d\n\n", getpid());
+    wait();
     exit();
+    return 0;
+}
+
+int test_scheduler_performance_fork(void) {
+    int pid = fork();
+    if (pid == 0) {
+        printf(1, "CHILD Process with PID %d\n\n", getpid());
+        exit();
+    } else {
+        wait();
+        printf(1, "PARENT Process with PID %d\n\n", getpid());
+        exit();
+    }
+    return 0;
 }
       
 int PScheduler(void){
