@@ -351,42 +351,54 @@ scheduler(void)
   struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
+  int highest_priority;
+  int burst_start;
+  int burst_end;
   
   for(;;){
     // Enable interrupts on this processor.
     sti();
 
-    int highest_priority = 31;
-
     // Loop over process table looking for process to run.
+    highest_priority = 31;
     acquire(&ptable.lock);
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if (p->state == RUNNABLE && p->priority < highest_priority) {
-        highest_priority = p->priority;
+      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+          if (p->state == RUNNABLE && p->priority < highest_priority) {
+              highest_priority = p->priority;
+          }
       }
+
+      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE)
+        continue;
+
+      if(p->priority != highest_priority){
+          if (p->priority > 0) {
+              p->priority = p->priority - 1;
+          }
+          continue;
+      }
+
+      // Switch to chosen process.  It is the process's job
+      // to release ptable.lock and then reacquire it
+      // before jumping back to us.
+      burst_start = ticks;
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
+      p->priority++;
+
+      swtch(&(c->scheduler), p->context);
+      switchkvm();
+
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
+      burst_end = ticks;
+      p->burst_time += (burst_end - burst_start);
     }
 
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if (p->priority == highest_priority) {
-          // Switch to chosen process.  It is the process's job
-          // to release ptable.lock and then reacquire it
-          // before jumping back to us.
-          c->proc = p;
-          int burst_start = ticks;
-          switchuvm(p);
-          p->state = RUNNING;
-
-          swtch(&(c->scheduler), p->context);
-          switchkvm();
-          int burst_end = ticks;
-          p->burst_time += (burst_end - burst_start);
-
-          // Process is done running for now.
-          // It should have changed its p->state before coming back.
-          c->proc = 0;
-          release(&ptable.lock);
-      }
-    } 
+    release(&ptable.lock);
   }
 }
 
