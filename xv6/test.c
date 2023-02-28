@@ -8,9 +8,9 @@ int test_scheduler_performance_fork();
 
 int main(int argc, char *argv[])
 {
-    // PScheduler();
-    // test_scheduler_performance();
-    // test_scheduler_performance_fork();
+    PScheduler();
+    test_scheduler_performance();
+    test_scheduler_performance_fork();
     exit();
     return 0;
 }    
